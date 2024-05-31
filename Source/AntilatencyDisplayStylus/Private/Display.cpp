@@ -34,7 +34,7 @@ void UDisplay::BeginPlay() {
 		_deviceNetworkSubsystem->StartDeviceNetwork();
 	}
 
-	_onDeviceNetworkChangedHandle = _deviceNetworkSubsystem->OnDeviceNetworkUpdated().AddUObject(this, &UDisplay::OnDeviceNetworkChanged);
+	_deviceNetworkSubsystem->OnDeviceNetworkUpdated.AddUniqueDynamic(this, &UDisplay::OnDeviceNetworkChanged);
 
 	OnDeviceNetworkChanged();
 }
@@ -46,8 +46,8 @@ void UDisplay::TickComponent(float deltaTime, ELevelTick tickType, FActorCompone
 }
 
 void UDisplay::EndPlay(const EEndPlayReason::Type endPlayReason) {
-	if (_deviceNetworkSubsystem != nullptr && _onDeviceNetworkChangedHandle.IsValid()) {
-		_deviceNetworkSubsystem->OnDeviceNetworkUpdated().Remove(_onDeviceNetworkChangedHandle);
+	if (_deviceNetworkSubsystem != nullptr) {
+		_deviceNetworkSubsystem->OnDeviceNetworkUpdated.RemoveDynamic(this, &UDisplay::OnDeviceNetworkChanged);
 	}
 
 	_pceCotask = nullptr;
@@ -179,7 +179,7 @@ void UDisplay::OnDeviceNetworkChanged() {
 		return;
 	}
 
-	_displayReadyEvent.Broadcast();
+	OnDisplayReady.Broadcast();
 
 	UpdateDisplayMesh();
 }

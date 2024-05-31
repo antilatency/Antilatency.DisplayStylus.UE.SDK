@@ -58,12 +58,11 @@ protected:
 	UPROPERTY()
 	bool _isInitialized = false;
 
-	FDelegateHandle _onDeviceNetworkChangedHandle;
-	FDelegateHandle _onDisplayReadyHandle;
-
 	// Self interface
 protected:
 	bool InitLibraries();
+
+	UFUNCTION()
 	void OnDeviceNetworkChanged();
 	bool FindDisplay();
 

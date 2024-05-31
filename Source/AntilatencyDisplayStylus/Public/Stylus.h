@@ -11,6 +11,10 @@
 
 #include "Stylus.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStylusPoseUpdated, FVector, stylusLocation, FRotator, stylusRotation);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStylusButtonStateUpdated, bool, stylusButtonPressed);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStylusDestroy);
+
 UCLASS(ClassGroup=(Antilatency))
 class ANTILATENCYDISPLAYSTYLUS_API AStylus : public AActor {
 	GENERATED_BODY()
@@ -23,14 +27,14 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float ExtrapolationTime = 0.06f;
 
-	DECLARE_EVENT_TwoParams(AStylus, FStylusPoseUpdated, FVector, FRotator)
-	FStylusPoseUpdated& OnStylusPoseUpdated() { return _stylusPoseUpdatedEvent; }
+	UPROPERTY(BlueprintAssignable)
+	FOnStylusPoseUpdated OnStylusPoseUpdated;
 
-	DECLARE_EVENT_OneParam(AStylus, FStylusButtonStateUpdated, bool)
-	FStylusButtonStateUpdated& OnStylusButtonStateUpdated() { return _stylusButtonStateUpdatedEvent; }
+	UPROPERTY(BlueprintAssignable)
+	FOnStylusButtonStateUpdated OnStylusButtonStateUpdated;
 
-	DECLARE_EVENT(AStylus, FStylusDestroy)
-	FStylusDestroy& OnStylusDestroy() { return _stylusDestroyEvent; }
+	UPROPERTY(BlueprintAssignable)
+	FOnStylusDestroy OnStylusDestroy;
 
 protected:
 	UPROPERTY()
@@ -53,10 +57,6 @@ protected:
 
 	UPROPERTY()
 	FRotator _extrapolatedRotation = FRotator::ZeroRotator;
-
-	FStylusPoseUpdated _stylusPoseUpdatedEvent;
-	FStylusButtonStateUpdated _stylusButtonStateUpdatedEvent;
-	FStylusDestroy _stylusDestroyEvent;
 
 	// Self interface
 public:

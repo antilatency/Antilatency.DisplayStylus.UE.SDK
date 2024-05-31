@@ -13,6 +13,8 @@
 
 #include "DeviceNetworkSubsystem.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeviceNetworkUpdated);
+
 /**
  * 
  */
@@ -45,12 +47,10 @@ public:
 	UDeviceNetwork* GetDeviceNetwork() const;
 	void StopDeviceNetwork();
 
-	DECLARE_EVENT(UDeviceNetworkSubsystem, FDeviceNetworkUpdated)
-	FDeviceNetworkUpdated& OnDeviceNetworkUpdated(){ return _deviceNetworkUpdatedEvent; }
+	UPROPERTY(BlueprintAssignable)
+	FOnDeviceNetworkUpdated OnDeviceNetworkUpdated;
 
 private:
-	FDeviceNetworkUpdated _deviceNetworkUpdatedEvent;
-	
 	UPROPERTY()
 	UDeviceNetworkLibrary* _deviceNetworkLibrary;
 

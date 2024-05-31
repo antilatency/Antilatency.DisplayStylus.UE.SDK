@@ -36,7 +36,7 @@ void UStylusCreator::BeginPlay() {
 		_deviceNetworkSubsystem->StartDeviceNetwork();
 	}
 
-	_onDeviceNetworkChangedHandle = _deviceNetworkSubsystem->OnDeviceNetworkUpdated().AddUObject(this, &UStylusCreator::OnDeviceNetworkChanged);
+	_deviceNetworkSubsystem->OnDeviceNetworkUpdated.AddUniqueDynamic(this, &UStylusCreator::OnDeviceNetworkChanged);
 
 	OnDeviceNetworkChanged();
 }
@@ -51,12 +51,12 @@ void UStylusCreator::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 void UStylusCreator::EndPlay(const EEndPlayReason::Type endPlayReason) {
 	Super::EndPlay(endPlayReason);
 
-	if (_deviceNetworkSubsystem != nullptr && _onDeviceNetworkChangedHandle.IsValid()) {
-		_deviceNetworkSubsystem->OnDeviceNetworkUpdated().Remove(_onDeviceNetworkChangedHandle);
+	if (_deviceNetworkSubsystem != nullptr) {
+		_deviceNetworkSubsystem->OnDeviceNetworkUpdated.RemoveDynamic(this, &UStylusCreator::OnDeviceNetworkChanged);
 	}
 
-	if (_display != nullptr && _onDisplayReadyHandle.IsValid()) {
-		_display->OnDisplayReady().Remove(_onDisplayReadyHandle);
+	if (_display != nullptr) {
+		_display->OnDisplayReady.RemoveDynamic(this, &UStylusCreator::OnDeviceNetworkChanged);
 	}
 }
 
@@ -213,7 +213,7 @@ bool UStylusCreator::FindDisplay() {
 
 	if (displaysCount == 1) {
 		_display = displays[0];
-		_onDisplayReadyHandle = _display->OnDisplayReady().AddUObject(this, &UStylusCreator::OnDeviceNetworkChanged);
+		_display->OnDisplayReady.AddUniqueDynamic(this, &UStylusCreator::OnDeviceNetworkChanged);
 		return true;
 	}
 

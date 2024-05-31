@@ -18,6 +18,7 @@
 
 #include "Display.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDisplayReady);
 
 UCLASS( ClassGroup=(Antilatency), meta=(BlueprintSpawnableComponent) )
 class ANTILATENCYDISPLAYSTYLUS_API UDisplay : public USceneComponent {
@@ -39,8 +40,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	UMaterial* BorderMaterial = nullptr;
 
-	DECLARE_EVENT(UDisplay, FDisplayReady)
-	FDisplayReady& OnDisplayReady(){ return _displayReadyEvent; }
+	UPROPERTY(BlueprintAssignable)
+	FOnDisplayReady OnDisplayReady;
 
 protected:
 	UPROPERTY()
@@ -77,9 +78,6 @@ protected:
 	UProceduralMeshComponent* _displayMesh = nullptr;
 	
 	const FString _displayNodeHardwareName = "AntilatencyPhysicalConfigurableEnvironment";
-	
-	FDelegateHandle _onDeviceNetworkChangedHandle;
-	FDisplayReady _displayReadyEvent;
 
 	// Self interface
 public:
@@ -96,6 +94,7 @@ public:
 	bool GetHalfScreenSize(FVector2D& result) const;
 
 protected:
+	UFUNCTION()
 	void OnDeviceNetworkChanged();
 	bool InitLibraries();
 	bool FindPCENode(FAdnNode& result) const;

@@ -46,7 +46,7 @@ void UDeviceNetworkSubsystem::Tick(float deltaTime) {
 
 	_lastUpdateId = updateId;
 
-	_deviceNetworkUpdatedEvent.Broadcast();
+	OnDeviceNetworkUpdated.Broadcast();
 }
 
 bool UDeviceNetworkSubsystem::StartDeviceNetwork(UDeviceFilter* deviceFilter) {

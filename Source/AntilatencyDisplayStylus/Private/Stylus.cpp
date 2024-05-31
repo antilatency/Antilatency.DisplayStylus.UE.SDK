@@ -17,7 +17,7 @@ void AStylus::BeginPlay() {
 void AStylus::EndPlay(const EEndPlayReason::Type endPlayReason) {
 	Super::EndPlay(endPlayReason);
 
-	_stylusDestroyEvent.Broadcast();
+	OnStylusDestroy.Broadcast();
 
 	_heiCotask = nullptr;
 	_inputPin = nullptr;
@@ -60,7 +60,7 @@ void AStylus::Tick(float deltaTime) {
 	_extrapolatedLocation = GetActorLocation();
 	_extrapolatedRotation = GetActorRotation();
 
-	_stylusPoseUpdatedEvent.Broadcast(_extrapolatedLocation, _extrapolatedRotation);
+	OnStylusPoseUpdated.Broadcast(_extrapolatedLocation, _extrapolatedRotation);
 
 	EPinState pinState;
 	exception = _inputPin->GetState(pinState);
@@ -69,7 +69,7 @@ void AStylus::Tick(float deltaTime) {
 		return;
 	}
 
-	_stylusButtonStateUpdatedEvent.Broadcast(pinState == EPinState::Low);
+	OnStylusButtonStateUpdated.Broadcast(pinState == EPinState::Low);
 }
 
 bool AStylus::Initialize(UAltTrackingCotask* trackingCotask, UHardwareExtensionInterfaceCotask* heiCotask, UInputPin* inputPin, UDisplay* display) {
